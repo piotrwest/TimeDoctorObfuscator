@@ -1,11 +1,14 @@
 ﻿using System;
 using Fiddler;
+using NLog;
 using TimeDoctorObfuscator.Tampering;
+using Logger = NLog.Logger;
 
 namespace TimeDoctorObfuscator
 {
     class Program
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static UrlCaptureConfiguration _captureConfiguration;
 
         static void Main(string[] args)
@@ -28,8 +31,7 @@ namespace TimeDoctorObfuscator
             //File.WriteAllBytes("omg.jpg", x);
             //return;
             
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.SetWindowSize(Logger.DestinationWidth, Logger.DestinationHeight);
+            LoggerConfig.Init();
             MakeItRain();
         }
 
@@ -39,19 +41,19 @@ namespace TimeDoctorObfuscator
 
             InstallCertificate();
 
-            Logger.Log("Starting...");
+            Logger.Info("Starting...");
             var tamperer = Start(_captureConfiguration);
             var awakeMaker = new KeepComputerAwake();
             awakeMaker.MakeItAwake();
-            Logger.Log("Started.");
+            Logger.Info("Started.");
 
-            Logger.Log("Press enter to exit!");
+            Logger.Info("Press enter to exit!");
             Console.ReadLine();
 
-            Logger.Log("Stopping...");
+            Logger.Info("Stopping...");
             Stop(tamperer);
             awakeMaker.RestorePreviousState();
-            Logger.Log("Stopped.");
+            Logger.Info("Stopped.");
         }
 
         static RequestsTamperer Start(UrlCaptureConfiguration config)
@@ -81,14 +83,14 @@ namespace TimeDoctorObfuscator
         {
             if (!string.IsNullOrEmpty(_captureConfiguration.Cert))
             {
-                Logger.Log("Certificate already installed, reusing...");
+                Logger.Info("Certificate already installed, reusing...");
                 FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.key", _captureConfiguration.Key);
                 FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.cert", _captureConfiguration.Cert);
             }
 
             if (!CertMaker.rootCertExists())
             {
-                Logger.Log("Installing certificate...");
+                Logger.Info("Installing certificate...");
                 if (!CertMaker.createRootCert())
                     return false;
 
@@ -100,7 +102,7 @@ namespace TimeDoctorObfuscator
                 _captureConfiguration.Key =
                     FiddlerApplication.Prefs.GetStringPref("fiddler.certmaker.bc.key", null);
                 _captureConfiguration.Save();
-                Logger.Log("Certificate installed, exitting, run the program again just to be sure.");
+                Logger.Info("Certificate installed, exitting, run the program again just to be sure.");
                 Console.WriteLine("Press enter to exit...");
                 Console.ReadLine();
                 Environment.Exit(0);

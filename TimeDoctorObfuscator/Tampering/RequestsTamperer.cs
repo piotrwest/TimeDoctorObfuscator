@@ -2,11 +2,14 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using Fiddler;
+using NLog;
+using Logger = NLog.Logger;
 
 namespace TimeDoctorObfuscator.Tampering
 {
     public class RequestsTamperer
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly UrlCaptureConfiguration _config;
 
         public RequestsTamperer(UrlCaptureConfiguration config)
@@ -83,7 +86,7 @@ namespace TimeDoctorObfuscator.Tampering
             {
                 logMsg = logMsg.Replace(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method=", "Method: ");
             }
-            Logger.LogDebug(logMsg);
+            Logger.Debug(logMsg);
         }
 
         private static bool RequestIsForStaticFile(string fullUrl)

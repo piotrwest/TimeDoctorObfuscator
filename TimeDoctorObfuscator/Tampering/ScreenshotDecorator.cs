@@ -2,11 +2,14 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using Fiddler;
+using NLog;
+using Logger = NLog.Logger;
 
 namespace TimeDoctorObfuscator.Tampering
 {
     public class ScreenshotDecorator
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly Random Rand = new Random();
         private const string Placeholder = "E03C3BBD328B4987BFF6C5E83814D311";
 
@@ -39,7 +42,7 @@ namespace TimeDoctorObfuscator.Tampering
                     var kittenString = Convert.ToBase64String(kitten, Base64FormattingOptions.None);
                     var kittenEncoded = kittenString.Replace("+", "%2B").Replace("/", "%2F").Replace(" ", "%20");
                     reqBody = replaced.Replace(Placeholder, kittenEncoded);
-                    Logger.Log($"Replaced {i} image :)");
+                    Logger.Info($"Replaced {i} image :)");
                 }
             }
 

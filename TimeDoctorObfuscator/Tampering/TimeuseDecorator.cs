@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Fiddler;
+using NLog;
+using Logger = NLog.Logger;
 
 namespace TimeDoctorObfuscator.Tampering
 {
     public class TimeuseDecorator
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly HashSet<string> ProcessedTimeuseParts = new HashSet<string>
         {
             "url", "window_title", "process_name", "document", "sub_category", "work_mode"
@@ -37,7 +40,7 @@ namespace TimeDoctorObfuscator.Tampering
                 result = result.TrimEnd('&');
                 if (reqBody != result)
                 {
-                    Logger.Log("Replaced some timeuse stats :)");
+                    Logger.Info("Replaced some timeuse stats :)");
                 }
                 reqBody = result;
             }
