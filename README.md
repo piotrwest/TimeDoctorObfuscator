@@ -7,6 +7,7 @@ Trick Time Doctor (TimeDoctor.com) to send tampered data. E.g. disable Time Doct
 * Do not report any Website browsing
 * Report usage of every application as "CensoredProcess"
 * Report every window title name as "Censored Window Title"
+* Prevents computer from going to sleep
 
 ### Quick-Start guide
  * Run TimeDoctor, go to options->ProxySettings
@@ -26,7 +27,6 @@ TimeDoctor will work as normal, therefore popups like _Are you working on XXX?_ 
 
 ### Issues
  - Time raported during locked screen will still be visible in TimeDoctor.com as **Edited Time**
- - Windows can go sleep during locked screen
  - Inactivity must me still carried out
  
 ### License

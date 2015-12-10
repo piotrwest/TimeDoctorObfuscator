@@ -38,13 +38,19 @@ namespace TimeDoctorObfuscator
             _captureConfiguration = UrlCaptureConfiguration.Read();
 
             InstallCertificate();
+
             Logger.Log("Starting...");
             var tamperer = Start(_captureConfiguration);
+            var awakeMaker = new KeepComputerAwake();
+            awakeMaker.MakeItAwake();
             Logger.Log("Started.");
+
             Logger.Log("Press enter to exit!");
             Console.ReadLine();
+
             Logger.Log("Stopping...");
             Stop(tamperer);
+            awakeMaker.RestorePreviousState();
             Logger.Log("Stopped.");
         }
 
