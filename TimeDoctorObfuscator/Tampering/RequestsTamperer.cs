@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Text.RegularExpressions;
 using Fiddler;
 
 namespace TimeDoctorObfuscator.Tampering
@@ -29,6 +31,9 @@ namespace TimeDoctorObfuscator.Tampering
                 return;
 
             LogUrlHit(session);
+#if DEBUG
+            LogMethodHitWithBody(session);
+#endif
 
             if (session.PathAndQuery.ToLower().Contains("upload_screen"))
             {
@@ -37,11 +42,37 @@ namespace TimeDoctorObfuscator.Tampering
             }
             else
             {
-                if (session.PathAndQuery.ToLower().Contains("upload_timeuse"))
+                if (session.PathAndQuery.ToLower().Contains("upload_time")) //matches methods: upload_timeuse, upload_time
                 {
                     var timeuseDecorator = new TimeuseDecorator();
                     timeuseDecorator.ProcessTimeuse(session);
                 }
+            }
+        }
+
+        private static void LogMethodHitWithBody(Session session)
+        {
+            var logMsg = session.PathAndQuery;
+            var regex = new Regex(@"(method=)(?<method>.*)(&)");
+            var match = regex.Match(logMsg);
+            if (match.Success)
+            {
+                if (logMsg.StartsWith(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method="))
+                {
+                    logMsg = logMsg.Replace(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method=", "");
+                }
+                var content = session.GetRequestBodyAsString();
+                if (content.Contains("&file["))
+                {
+                    for (int i = 0; i < 20; i++)
+                    {
+                        var regex1 = @"(file\[" + i + @"]=)([A-Za-z0-9%]+)";
+                        content = Regex.Replace(content, regex1, "$1" + "omnomnom");
+                    }
+                }
+                File.AppendAllText("log-" + match.Groups["method"].Value + ".txt",
+                    DateTime.Now.ToLongTimeString() + Environment.NewLine + logMsg + Environment.NewLine + content +
+                    Environment.NewLine);
             }
         }
 

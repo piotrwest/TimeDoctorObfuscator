@@ -8,7 +8,7 @@ namespace TimeDoctorObfuscator.Tampering
 {
     public class TimeuseDecorator
     {
-        private static HashSet<string> processedTimeuseParts = new HashSet<string>
+        private static readonly HashSet<string> ProcessedTimeuseParts = new HashSet<string>
         {
             "url", "window_title", "process_name", "document", "sub_category", "work_mode"
         };
@@ -17,7 +17,11 @@ namespace TimeDoctorObfuscator.Tampering
         {
             var reqBody = sess.GetRequestBodyAsString();
 
+#if DEBUG
+            File.AppendAllText("timeuse.txt", DateTime.Now.ToLongTimeString() + Environment.NewLine);
             File.AppendAllText("timeuse.txt", sess.PathAndQuery + Environment.NewLine + reqBody + Environment.NewLine);
+#endif
+
             if (reqBody.Contains("&"))
             {
                 var sb = new StringBuilder();
@@ -33,11 +37,13 @@ namespace TimeDoctorObfuscator.Tampering
                 result = result.TrimEnd('&');
                 if (reqBody != result)
                 {
-                    Logger.Log($"Replaced some timeuse stats :)");
+                    Logger.Log("Replaced some timeuse stats :)");
                 }
                 reqBody = result;
             }
+#if DEBUG
             File.AppendAllText("timeuse.txt", reqBody + Environment.NewLine + Environment.NewLine);
+#endif
 
             sess.utilSetRequestBody(reqBody);
         }
@@ -91,7 +97,7 @@ namespace TimeDoctorObfuscator.Tampering
 
         private static bool CanProcess(string timeusePartType)
         {
-            return processedTimeuseParts.Contains(timeusePartType);
+            return ProcessedTimeuseParts.Contains(timeusePartType);
         }
         
         private static string GetEverythingInStringBeforeCharacter(string sourceString, char c)
