@@ -1,4 +1,5 @@
-﻿using Fiddler;
+﻿using System.Linq;
+using Fiddler;
 
 namespace TimeDoctorObfuscator.Tampering
 {
@@ -27,6 +28,8 @@ namespace TimeDoctorObfuscator.Tampering
             if (RequestIsForStaticFile(fullUrl))
                 return;
 
+            LogUrlHit(session);
+
             if (session.PathAndQuery.ToLower().Contains("upload_screen"))
             {
                 var screenshotDecorator = new ScreenshotDecorator();
@@ -40,6 +43,16 @@ namespace TimeDoctorObfuscator.Tampering
                     timeuseDecorator.ProcessTimeuse(session);
                 }
             }
+        }
+
+        private static void LogUrlHit(Session session)
+        {
+            var logMsg = session.PathAndQuery;
+            if (logMsg.StartsWith(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method="))
+            {
+                logMsg = logMsg.Replace(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method=", "Method: ");
+            }
+            Logger.LogDebug(logMsg);
         }
 
         private static bool RequestIsForStaticFile(string fullUrl)

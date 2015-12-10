@@ -12,11 +12,12 @@ namespace TimeDoctorObfuscator.Tampering
         {
             "url", "window_title", "process_name", "document", "sub_category", "work_mode"
         };
+
         public void ProcessTimeuse(Session sess)
         {
             var reqBody = sess.GetRequestBodyAsString();
 
-            File.AppendAllText("timeuse.txt", sess.PathAndQuery + "--->" + reqBody + Environment.NewLine);
+            File.AppendAllText("timeuse.txt", sess.PathAndQuery + Environment.NewLine + reqBody + Environment.NewLine);
             if (reqBody.Contains("&"))
             {
                 var sb = new StringBuilder();
@@ -32,11 +33,11 @@ namespace TimeDoctorObfuscator.Tampering
                 result = result.TrimEnd('&');
                 if (reqBody != result)
                 {
-                    Console.WriteLine($"{DateTime.Now}: Replaced some timeuse stats :)");
+                    Logger.Log($"Replaced some timeuse stats :)");
                 }
                 reqBody = result;
             }
-            File.AppendAllText("timeuse.txt", "+++>" + reqBody + Environment.NewLine);
+            File.AppendAllText("timeuse.txt", reqBody + Environment.NewLine + Environment.NewLine);
 
             sess.utilSetRequestBody(reqBody);
         }

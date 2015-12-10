@@ -27,7 +27,9 @@ namespace TimeDoctorObfuscator
             //File.WriteAllBytes("omg.png", x);
             //File.WriteAllBytes("omg.jpg", x);
             //return;
-
+            
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.SetWindowSize(Logger.DestinationWidth, Logger.DestinationHeight);
             MakeItRain();
         }
 
@@ -36,14 +38,14 @@ namespace TimeDoctorObfuscator
             _captureConfiguration = UrlCaptureConfiguration.Read();
 
             InstallCertificate();
-            Console.WriteLine("Starting...");
+            Logger.Log("Starting...");
             var tamperer = Start(_captureConfiguration);
-            Console.WriteLine("Started.");
-            Console.WriteLine("Press enter to exit!");
+            Logger.Log("Started.");
+            Logger.Log("Press enter to exit!");
             Console.ReadLine();
-            Console.WriteLine("Stopping...");
+            Logger.Log("Stopping...");
             Stop(tamperer);
-            Console.WriteLine("Stopped.");
+            Logger.Log("Stopped.");
         }
 
         static RequestsTamperer Start(UrlCaptureConfiguration config)
@@ -73,14 +75,14 @@ namespace TimeDoctorObfuscator
         {
             if (!string.IsNullOrEmpty(_captureConfiguration.Cert))
             {
-                Console.WriteLine("Certificate already installed, reusing...");
+                Logger.Log("Certificate already installed, reusing...");
                 FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.key", _captureConfiguration.Key);
                 FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.cert", _captureConfiguration.Cert);
             }
 
             if (!CertMaker.rootCertExists())
             {
-                Console.WriteLine("Installing certificate...");
+                Logger.Log("Installing certificate...");
                 if (!CertMaker.createRootCert())
                     return false;
 

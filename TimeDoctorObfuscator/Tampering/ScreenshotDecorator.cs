@@ -39,7 +39,7 @@ namespace TimeDoctorObfuscator.Tampering
                     var kittenString = Convert.ToBase64String(kitten, Base64FormattingOptions.None);
                     var kittenEncoded = kittenString.Replace("+", "%2B").Replace("/", "%2F").Replace(" ", "%20");
                     reqBody = replaced.Replace(Placeholder, kittenEncoded);
-                    Console.WriteLine($"{DateTime.Now}: Replaced {i} image :)");
+                    Logger.Log($"Replaced {i} image :)");
                 }
             }
 
