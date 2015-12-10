@@ -100,6 +100,10 @@ namespace TimeDoctorObfuscator
                 _captureConfiguration.Key =
                     FiddlerApplication.Prefs.GetStringPref("fiddler.certmaker.bc.key", null);
                 _captureConfiguration.Save();
+                Logger.Log("Certificate installed, exitting, run the program again just to be sure.");
+                Console.WriteLine("Press enter to exit...");
+                Console.ReadLine();
+                Environment.Exit(0);
             }
 
             return true;
