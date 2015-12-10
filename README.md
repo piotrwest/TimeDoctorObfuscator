@@ -1,8 +1,7 @@
 # TimeDoctorObfuscator
-Trick Time Doctor (TimeDoctor.com) to send tampered data. E.g. disable Time Doctor screenshots, do not report websites surfing.
+Trick Time Doctor (TimeDoctor.com) to send tampered data. E.g. disable Time Doctor screenshots, do not report internet surfing.
 
 ### Features
-
 * Relace every screenshot taken by TimeDoctor with sweet cat wallpaper
 * Replace keystrokes count and mouse moves count by random number greater than 0
 * Do not report any Website browsing
