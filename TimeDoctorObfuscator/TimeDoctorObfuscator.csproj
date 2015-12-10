@@ -62,7 +62,10 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestsTamperer.cs" />
+    <Compile Include="StaticConfig.cs" />
+    <Compile Include="Tampering\RequestsTamperer.cs" />
+    <Compile Include="Tampering\ScreenshotDecorator.cs" />
+    <Compile Include="Tampering\TimeuseDecorator.cs" />
     <Compile Include="UrlCaptureConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>

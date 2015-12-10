@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
 using Fiddler;
+using TimeDoctorObfuscator.Tampering;
 
 namespace TimeDoctorObfuscator
 {
     class Program
     {
-        private static UrlCaptureConfiguration CaptureConfiguration;
+        private static UrlCaptureConfiguration _captureConfiguration;
 
         static void Main(string[] args)
         {
@@ -40,12 +33,11 @@ namespace TimeDoctorObfuscator
 
         private static void MakeItRain()
         {
-            CaptureConfiguration = UrlCaptureConfiguration.Read();
-            CaptureConfiguration.CaptureDomain = "timedoctor.com";
+            _captureConfiguration = UrlCaptureConfiguration.Read();
 
             InstallCertificate();
             Console.WriteLine("Starting...");
-            var tamperer = Start(CaptureConfiguration);
+            var tamperer = Start(_captureConfiguration);
             Console.WriteLine("Started.");
             Console.WriteLine("Press enter to exit!");
             Console.ReadLine();
@@ -79,11 +71,11 @@ namespace TimeDoctorObfuscator
 
         public static bool InstallCertificate()
         {
-            if (!string.IsNullOrEmpty(CaptureConfiguration.Cert))
+            if (!string.IsNullOrEmpty(_captureConfiguration.Cert))
             {
                 Console.WriteLine("Certificate already installed, reusing...");
-                FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.key", CaptureConfiguration.Key);
-                FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.cert", CaptureConfiguration.Cert);
+                FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.key", _captureConfiguration.Key);
+                FiddlerApplication.Prefs.SetStringPref("fiddler.certmaker.bc.cert", _captureConfiguration.Cert);
             }
 
             if (!CertMaker.rootCertExists())
@@ -95,11 +87,11 @@ namespace TimeDoctorObfuscator
                 if (!CertMaker.trustRootCert())
                     return false;
 
-                CaptureConfiguration.Cert =
+                _captureConfiguration.Cert =
                     FiddlerApplication.Prefs.GetStringPref("fiddler.certmaker.bc.cert", null);
-                CaptureConfiguration.Key =
+                _captureConfiguration.Key =
                     FiddlerApplication.Prefs.GetStringPref("fiddler.certmaker.bc.key", null);
-                CaptureConfiguration.Save();
+                _captureConfiguration.Save();
             }
 
             return true;
@@ -112,9 +104,9 @@ namespace TimeDoctorObfuscator
                 if (!CertMaker.removeFiddlerGeneratedCerts(true))
                     return false;
             }
-            CaptureConfiguration.Cert = null;
-            CaptureConfiguration.Key = null;
-            CaptureConfiguration.Save();
+            _captureConfiguration.Cert = null;
+            _captureConfiguration.Key = null;
+            _captureConfiguration.Save();
 
             return true;
         }
