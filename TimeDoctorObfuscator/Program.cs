@@ -71,7 +71,7 @@ namespace TimeDoctorObfuscator
             return tamperer;
         }
 
-        static void Stop(RequestsTamperer tamperer)
+        private static void Stop(RequestsTamperer tamperer)
         {
             FiddlerApplication.BeforeRequest -= tamperer.BeforeRequest;
 

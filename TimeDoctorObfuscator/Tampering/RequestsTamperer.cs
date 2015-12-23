@@ -60,10 +60,7 @@ namespace TimeDoctorObfuscator.Tampering
             var match = regex.Match(logMsg);
             if (match.Success)
             {
-                if (logMsg.StartsWith(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method="))
-                {
-                    logMsg = logMsg.Replace(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method=", "");
-                }
+                logMsg = SimplificatePathAndQuery(logMsg);
                 var content = session.GetRequestBodyAsString();
                 if (content.Contains("&file["))
                 {
@@ -73,6 +70,13 @@ namespace TimeDoctorObfuscator.Tampering
                         content = Regex.Replace(content, regex1, "$1" + "omnomnom");
                     }
                 }
+                var splittedContent = content.Split(new[] {"&"}, StringSplitOptions.None);
+                for (int i = 0; i < splittedContent.Length; i++)
+                {
+                    if(!string.IsNullOrWhiteSpace(splittedContent[i]))
+                        splittedContent[i] = Uri.UnescapeDataString(splittedContent[i]);
+                }
+                content = string.Join(Environment.NewLine, splittedContent);
                 File.AppendAllText("log-" + match.Groups["method"].Value + ".txt",
                     DateTime.Now.ToLongTimeString() + Environment.NewLine + logMsg + Environment.NewLine + content +
                     Environment.NewLine);
@@ -82,11 +86,18 @@ namespace TimeDoctorObfuscator.Tampering
         private static void LogUrlHit(Session session)
         {
             var logMsg = session.PathAndQuery;
-            if (logMsg.StartsWith(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method="))
-            {
-                logMsg = logMsg.Replace(@"/v2/api/execute.php?ver=tds-win-2.3.47.11&method=", "Method: ");
-            }
+            logMsg = SimplificatePathAndQuery(logMsg);
             Logger.Debug(logMsg);
+        }
+
+        private static string SimplificatePathAndQuery(string pathAndQuery)
+        {
+            var deviceIdReplaceRegex = @"&device_id=[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}";
+            pathAndQuery = Regex.Replace(pathAndQuery, deviceIdReplaceRegex, "+devid");
+            
+            var standardUrlReplaceRegex = Regex.Escape("/v2/api/execute.php?ver=tds-win-") + @"(\d+\.){3}\d+" + Regex.Escape("&method=");
+            pathAndQuery = Regex.Replace(pathAndQuery, standardUrlReplaceRegex, "+st=");
+            return pathAndQuery;
         }
 
         private static bool RequestIsForStaticFile(string fullUrl)

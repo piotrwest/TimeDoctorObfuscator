@@ -25,30 +25,36 @@ namespace TimeDoctorObfuscator.Tampering
             File.AppendAllText("timeuse.txt", sess.PathAndQuery + Environment.NewLine + reqBody + Environment.NewLine);
 #endif
 
-            if (reqBody.Contains("&"))
+            if (!string.IsNullOrWhiteSpace(reqBody) && reqBody.Contains("&"))
             {
-                var sb = new StringBuilder();
-                var parts = reqBody.Split(new[] { "&" }, StringSplitOptions.None);
-                foreach (var p in parts)
-                {
-                    var ret = ProcessTimeusePart(p);
-                    sb.Append(ret);
-                    sb.Append("&");
-                }
-
-                var result = sb.ToString();
-                result = result.TrimEnd('&');
-                if (reqBody != result)
-                {
-                    Logger.Info("Replaced some timeuse stats :)");
-                }
-                reqBody = result;
+                reqBody = ProcessTimeuseChangeInactivityState(reqBody);
             }
 #if DEBUG
             File.AppendAllText("timeuse.txt", reqBody + Environment.NewLine + Environment.NewLine);
 #endif
 
             sess.utilSetRequestBody(reqBody);
+        }
+
+
+        private static string ProcessTimeuseChangeInactivityState(string reqBody)
+        {
+            var sb = new StringBuilder();
+            var parts = reqBody.Split(new[] { "&" }, StringSplitOptions.None);
+            foreach (var p in parts)
+            {
+                var ret = ProcessTimeusePart(p);
+                sb.Append(ret);
+                sb.Append("&");
+            }
+
+            var result = sb.ToString();
+            result = result.TrimEnd('&');
+            if (reqBody != result)
+            {
+                Logger.Info("Replaced some timeuse stats");
+            }
+            return result;
         }
 
         private static string ProcessTimeusePart(string p)
@@ -102,7 +108,7 @@ namespace TimeDoctorObfuscator.Tampering
         {
             return ProcessedTimeuseParts.Contains(timeusePartType);
         }
-        
+
         private static string GetEverythingInStringBeforeCharacter(string sourceString, char c)
         {
             var l = sourceString.IndexOf(c);
