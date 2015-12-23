@@ -8,6 +8,7 @@ Trick Time Doctor (TimeDoctor.com) to send tampered data. E.g. disable Time Doct
 * Report usage of every application as "CensoredProcess"
 * Report every window title name as "Censored Window Title"
 * Prevents computer from going to sleep
+* Reports "idle time" as working time, even with screen locked (however... the timeline will be splitted into multiple entries of the same task)
 
 ### Quick-Start guide
  * Run TimeDoctor, go to options->ProxySettings
@@ -25,9 +26,10 @@ Effect: TimeDoctor can only connect through TimeDoctorObfuscator. No running Tim
 ### Popups & TimeDoctor behaviour
 TimeDoctor will work as normal, therefore popups like _Are you working on XXX?_ will still be there. However, that doesn't mean that it will report you chatting with friend on Facebook. Just click you are working and everything will be fine.
 
+Inactivity is reported as unedited work time, however the timeline will be splitted into multiple entries of the same task. After a longer break, you will still need to answer question "Was you working or on a break?". If you click "I was working" - the time will be reported as unedited work time. If you click "I was on a break" - the time won't be reported as work time.
+
 ### Issues
- - Time raported during locked screen will still be visible in TimeDoctor.com as **Edited Time**
- - Inactivity must me still carried out
+ - Inactivity is reported as unedited work time, but the timeline reveals multiple entries for the same task.
  
 ### License
 See LICENSE.md file.
